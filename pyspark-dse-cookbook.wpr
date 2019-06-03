@@ -1,0 +1,9 @@
+#!wing
+#!version=5.0
+##################################################################
+# Wing IDE project file                                          #
+##################################################################
+[project attributes]
+proj.file-list = [loc('README.me')]
+proj.file-type = 'shared'
+proj.home-dir = loc('.')
