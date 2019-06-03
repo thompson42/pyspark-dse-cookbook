@@ -1,4 +1,4 @@
-#pyspark-dse-cookbook
+# pyspark-dse-cookbook
 
 A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* components of the Datastax Enterprise platform.
 
@@ -21,7 +21,7 @@ This library is split into two sections:
 3. PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
 4. PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
-##PySpark scripts for Cassandra resident real-time data:
+## PySpark scripts for Cassandra resident real-time data:
 
 Cluster Purpose: real-time analytics component of a big data platform
 Components of Datastax Enterprise used: Spark, Cassandra, DSEFS
@@ -33,23 +33,23 @@ Cluster Name: DSE Analytics
 
 First lets load some data into DSEFS and then on into Cassandra tables (using the spark-scassandra-connector):
 
-####Load .CSV files into DSEFS - see Resources above
-####Load one of the .CSV files in DSEFS into a DataFrame
-####Load one of the .CSV files in DSEFS into a DataFrame and save to Cassandra as a table
+#### Load .CSV files into DSEFS - see Resources above
+#### Load one of the .CSV files in DSEFS into a DataFrame
+#### Load one of the .CSV files in DSEFS into a DataFrame and save to Cassandra as a table
 
 Lets run some JOINS taking note of the effect of partition key choice on Spark performance:
 
-####Load a DataFrame from a Cassandra table using SparkSQL
-####Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN (poorly chosen partition key -> table scan)
-####Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN (correctly chosen partition key -> efficient local data aware join -> NO SHUFFLE!)
-####Load two DataFrames one from a Cassandra table and the other one from DSEFS and perform a JOIN
+#### Load a DataFrame from a Cassandra table using SparkSQL
+#### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN (poorly chosen partition key -> table scan)
+#### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN (correctly chosen partition key -> efficient local data aware join -> NO SHUFFLE!)
+#### Load two DataFrames one from a Cassandra table and the other one from DSEFS and perform a JOIN
 
 Saving DataFrames to .parquet format:
 
-####Load a DataFrame from a Cassandra table using SparkSQL
-####Write out a DataFrame to DSEFS as a .parquet file
+#### Load a DataFrame from a Cassandra table using SparkSQL
+#### Write out a DataFrame to DSEFS as a .parquet file
 
-##PySpark scripts for Data Lake resident historic data (in .parquet format)
+## PySpark scripts for Data Lake resident historic data (in .parquet format)
 
 Cluster Purpose: big data querying with real-time join capabilities
 Components of Datastax Enterprise used: Spark, DSEFS
@@ -58,15 +58,15 @@ Access types: OLAP only
 Spark Execution location: these scripts are executed on the DSE Analytics Solo nodes
 Cluster Name: DSE Data Lake
 
-####Load a DataFrame from parquet data via SparkSQL
-####Load two DataFrames from parquet data via SparkSQL and perform a JOIN
+#### Load a DataFrame from parquet data via SparkSQL
+#### Load two DataFrames from parquet data via SparkSQL and perform a JOIN
 
 
-##PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
+## PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
 
-##PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
+## PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
-####Read a Cassandra table with timebased key
+#### Read a Cassandra table with timebased key
 
 
 
