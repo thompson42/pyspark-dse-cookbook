@@ -4,7 +4,6 @@
 # Wing IDE project file                                          #
 ##################################################################
 [project attributes]
-proj.file-list = [loc('README.md'),
-                  loc('README.me')]
+proj.file-list = [loc('README.md')]
 proj.file-type = 'shared'
 proj.home-dir = loc('.')

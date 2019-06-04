@@ -4,14 +4,40 @@ A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* comp
 
 Note that there are two clusters with 2 differing purposes: a DSE Analytics cluster (Real-time) and a DSE Analytics Solo cluster (Data Lake).
 
-Setup Notes: TODO
+## Setup Notes:
 
 DSBulk tool: Although not Spark, the ... TODO
-Resources: see the .CSV files in the resources directory of this project TODO
-Spark GUI: 
-Memory allocation: save-tp-disk
-CPU allication: faster processing...
+
+#### Sample data: 
+
+See the .CSV files in the sample-data directory of this project TODO
+
+#### Spark GUI:
+
+https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkWebInterface.html
+
+To use the Spark web interface enter the listen IP address of any Spark node in a browser followed by port number 7080 (configured in the spark-env.sh configuration file). Starting in DSE 5.1, all Spark nodes within an Analytics datacenter will redirect to the current Spark Master.
+
+#### Spark Job Server:
+
+https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkJobserverOverview.html
+
+DataStax Enterprise includes a bundled copy of the open-source Spark Jobserver, an optional component for submitting and managing Spark jobs, Spark contexts, and JARs on DSE Analytics clusters. 
+
+#### Spark history server: 
+
+https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkConfiguringfHistoryServer.html
+
+The Spark history server provides a way to load the event logs from Spark jobs that were run with event logging enabled. 
+
+#### Per application memory and CPU allocation:
+
+https://spark.apache.org/docs/2.2.0/configuration.html#dynamically-loading-spark-properties
+
+
 Resource allocation on dse-submit, 
+
+
 
 
 This library is split into two sections: 
@@ -64,11 +90,13 @@ Cluster Name: DSE Data Lake
 
 ## PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
 
+https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
+
 ## PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
 #### Read a Cassandra table with timebased key
 
 
 
-*DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system
+*DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.
 
