@@ -30,12 +30,20 @@ https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkConf
 
 The Spark history server provides a way to load the event logs from Spark jobs that were run with event logging enabled. 
 
-#### Per application memory and CPU allocation:
+#### Per application memory and CPU allocation on [dse spark-submit]:
 
 https://spark.apache.org/docs/2.2.0/configuration.html#dynamically-loading-spark-properties
 
+Run a Python application on a Spark standalone cluster where the python file is deployed on the node you do the [dse spark-submit]
 
-Resource allocation on dse-submit, 
+Deploy pyspark-dse-cookbook/pi.py to /home/some-path/pi.py on the node you run [dse spark-submit]
+
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/ds_user/pi.py \
+  1000
 
 
 
