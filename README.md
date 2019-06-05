@@ -2,9 +2,9 @@
 
 A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* components of the [Datastax Enterprise](http://www.datasatx.com) platform.
 
-## Setup notes, actions and basic introduction to Spark diagnostics:
+## Setup notes, actions and basic introduction to Spark diagnostics
 
-#### Load the Spark UI in your browser
+#### Load the Spark Master UI in your browser
 
 [Spark UI documentation](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkWebInterface.html)
 
@@ -49,7 +49,7 @@ dse spark-submit \
   1000
 ```
 
-Note that due to parallelism (job spreading across 2x cores) the job now only takes about 1 minute to run!
+Note that due to parallelism (the job spreading in parallel across 2x cores) the job now only takes about 1 minute to run.
 
 #### Introduction to the Spark Application UI
 
@@ -62,12 +62,12 @@ dse spark-submit \
   1000
 ```
 
-1. Note the job running in the Spark Master UI.
+1. Note the job running in the Spark Master UI
 2. Click thru to the Application UI and take note of job details
 3. Go back to the Spark Master UI and wait till the job finishes
 4. Note that you can no longer view the Application UI
 
-The application logs are quite verbose and as such are destroyed at the end of a successful run, to keep them activate the Spark history server.
+The application logs are quite verbose and as such are destroyed at the end of a successful run, to keep them for debugging, analysis and performance tuning you will need to activate the Spark history server.
 
 #### Activate the Spark history server
 
@@ -75,20 +75,25 @@ The application logs are quite verbose and as such are destroyed at the end of a
 
 The Spark history server provides a way to load the event logs from Spark jobs that were run with event logging enabled.
 
-Due to the verbosity of files generated at the Application level pay attention to the log rolling/cleanup configuration at the bottom of the page.
+Due to the verbosity of files generated at the Application level pay attention to the log rolling/cleanup configuration at the bottom of documentation link above.
 
-## Cookbook 
+# Cookbook 
 
-This library is split into four (4) sections: 
+These scripts are split into four (4) sections: 
 
-1. PySpark scripts for Cassandra resident real-time data (Cluster 1: DSE Analytics)
-2. PySpark scripts for Data Lake resident historic data in .parquet file based format (Cluster 2: DSE Analytics Solo)
-3. PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
-4. PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
+1. PySpark scripts for Cassandra resident real-time data (executed against Cluster1: DSE Analytics DC)
+2. PySpark scripts for Data Lake resident historic data in .parquet file based format (executed against Cluster 2: DSE Analytics Solo DC)
+3. PySpark scripts for JOINING/UNION of real-time and historic data in both clusters (executed against Cluster 2: DSE Analytics Solo DC but will also pull data from Cluster1: DSE Analytics DC)
+4. PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake (executed against Cluster 2: DSE Analytics Solo DC but will also pull data from Cluster1: DSE Analytics DC)
 
-Note that there are two clusters with 2 differing purposes: a DSE Analytics cluster (Real-time) and a DSE Analytics Solo cluster (Data Lake).
+DC = datacenter (A Cassandra logical datacenter)
 
-## Section 1: PySpark scripts for Cassandra resident real-time data:
+#### Cluster Topology:
+
+1. Cluster 1: (DSE Analytics DC)
+2. Cluster 2: (DSE Analytics Solo DC)
+
+## Section 1: PySpark scripts for Cassandra resident real-time data
 
 Cluster Purpose: real-time analytics component of a big data platform
 Components of Datastax Enterprise used: Spark, Cassandra, DSEFS
@@ -97,10 +102,36 @@ Access types: OLTP and OLAP
 Spark Execution location: these scripts are executed on the DSE Analytics nodes
 Cluster Name: DSE Analytics
 
+#### Test Cassandra Access
 
-First lets load some data into DSEFS and then on into Cassandra tables (using the spark-scassandra-connector):
+Deploy pyspark-dse-cookbook/test_cassandra_access.py to /home/<your-user>/test_cassandra_access.py to the node you just SSH'd into and run it:
 
-#### Load .CSV files into DSEFS - see Resources above
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/<your-user>/test_cassandra_access.py
+```
+
+You should see a table like this:
+
+![](/images/table_screen_shot.png)
+
+
+
+#### Load .CSV files into DSEFS manually at the command line
+
+ Note: DSEFS commands are available only in the logical datacenter.
+
+
+
+
+```
+>dsefs dsefs://127.0.0.1:5598/ > put file:/bluefile greenfile
+```
+
+
 #### Load one of the .CSV files in DSEFS into a DataFrame
 #### Load one of the .CSV files in DSEFS into a DataFrame and save to Cassandra as a table
 

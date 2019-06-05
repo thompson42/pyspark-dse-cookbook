@@ -9,8 +9,17 @@ proj.directory-list = [{'dirloc': loc('sample-data'),
                         'filter': '*',
                         'include_hidden': False,
                         'recursive': True,
+                        'watch_for_changes': True},
+                       {'dirloc': loc('images'),
+                        'excludes': (),
+                        'filter': '*',
+                        'include_hidden': False,
+                        'recursive': True,
                         'watch_for_changes': True}]
-proj.file-list = [loc('pi.py'),
-                  loc('README.md')]
+proj.file-list = [loc('images/table_screen_shot.png'),
+                  loc('pi.py'),
+                  loc('README.md'),
+                  loc('sample-data/table_screen_shot.png'),
+                  loc('test_cassandra_access.py')]
 proj.file-type = 'shared'
 proj.home-dir = loc('.')
