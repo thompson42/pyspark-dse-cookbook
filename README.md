@@ -118,11 +118,41 @@ You should see a table like this:
 
 ![](/images/table_screen_shot.png)
 
+If you fail to see the table you have a connectivity issue, check the Spark logs for problems.
 
+#### Load a ENTIRE Cassandra table into a DataFrame using simple read() method
+
+Deploy pyspark-dse-cookbook/load_dataframe_simple_read.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/<your-user>/load_dataframe_simple_read.py
+```
+
+#### Load a PARTIAL Cassandra table into a DataFrame using SparkSQL method
+
+Deploy pyspark-dse-cookbook/load_dataframe_spark_sql.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/<your-user>/load_dataframe_spark_sql.py
+```
+
+Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
 
 #### Load .CSV files into DSEFS manually at the command line
 
- Note: DSEFS commands are available only in the logical datacenter.
+Note: DSEFS commands are available only in the local logical datacenter.
+
+
+
+
 
 
 

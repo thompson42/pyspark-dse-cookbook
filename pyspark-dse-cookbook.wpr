@@ -17,9 +17,10 @@ proj.directory-list = [{'dirloc': loc('sample-data'),
                         'recursive': True,
                         'watch_for_changes': True}]
 proj.file-list = [loc('images/table_screen_shot.png'),
+                  loc('load_dataframe_simple_read.py'),
+                  loc('load_dataframe_spark_sql.py'),
                   loc('pi.py'),
                   loc('README.md'),
-                  loc('sample-data/table_screen_shot.png'),
                   loc('test_cassandra_access.py')]
 proj.file-type = 'shared'
 proj.home-dir = loc('.')
