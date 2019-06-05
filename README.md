@@ -1,61 +1,94 @@
 # pyspark-dse-cookbook
 
-A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* components of the Datastax Enterprise platform.
+A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* components of the [Datastax Enterprise](http://www.datasatx.com) platform.
 
-Note that there are two clusters with 2 differing purposes: a DSE Analytics cluster (Real-time) and a DSE Analytics Solo cluster (Data Lake).
+## Setup notes, actions and basic introduction to Spark diagnostics:
 
-## Setup Notes:
+#### Load the Spark UI in your browser
 
-DSBulk tool: Although not Spark, the ... TODO
-
-#### Sample data: 
-
-See the .CSV files in the sample-data directory of this project TODO
-
-#### Spark GUI:
-
-https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkWebInterface.html
+[Spark UI documentation](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkWebInterface.html)
 
 To use the Spark web interface enter the listen IP address of any Spark node in a browser followed by port number 7080 (configured in the spark-env.sh configuration file). Starting in DSE 5.1, all Spark nodes within an Analytics datacenter will redirect to the current Spark Master.
 
-#### Spark Job Server:
+#### SSH into one of the DSE Analytics (Spark) nodes
 
-https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkJobserverOverview.html
+```
+>ssh <options> <user>@<ip-address>
+```
 
-DataStax Enterprise includes a bundled copy of the open-source Spark Jobserver, an optional component for submitting and managing Spark jobs, Spark contexts, and JARs on DSE Analytics clusters. 
+#### Deploy python test job
 
-#### Spark history server: 
+Deploy pyspark-dse-cookbook/pi.py to /home/<your-user>/pi.py to the node you just SSH'd into
 
-https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkConfiguringfHistoryServer.html
+#### Run the sample pi.py script with 1GB/1xCore directly on the SSH node
 
-The Spark history server provides a way to load the event logs from Spark jobs that were run with event logging enabled. 
+[For command line options](https://spark.apache.org/docs/2.2.0/configuration.html#dynamically-loading-spark-properties)
 
-#### Per application memory and CPU allocation on [dse spark-submit]:
-
-https://spark.apache.org/docs/2.2.0/configuration.html#dynamically-loading-spark-properties
-
-Run a Python application on a Spark standalone cluster where the python file is deployed on the node you do the [dse spark-submit]
-
-Deploy pyspark-dse-cookbook/pi.py to /home/some-path/pi.py on the node you run [dse spark-submit]
-
+```
 dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/ds_user/pi.py \
+  /home/<your-user>/pi.py \
   1000
+```
 
+Note the job running in the Spark Master UI.
+The job should run for about 2 minutes.
 
+#### Run the sample pi.py script with 2GB/2xCore directly on the SSH node
 
+[For command line options](https://spark.apache.org/docs/2.2.0/configuration.html#dynamically-loading-spark-properties)
 
-This library is split into two sections: 
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 2G \
+  --total-executor-cores 2 \
+  /home/<your-user>/pi.py \
+  1000
+```
+
+Note that due to parallelism (job spreading across 2x cores) the job now only takes about 1 minute to run!
+
+#### Introduction to the Spark Application UI
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/<your-user>/pi.py \
+  1000
+```
+
+1. Note the job running in the Spark Master UI.
+2. Click thru to the Application UI and take note of job details
+3. Go back to the Spark Master UI and wait till the job finishes
+4. Note that you can no longer view the Application UI
+
+The application logs are quite verbose and as such are destroyed at the end of a successful run, to keep them activate the Spark history server.
+
+#### Activate the Spark history server
+
+[Spark history server documentation](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkConfiguringfHistoryServer.html)
+
+The Spark history server provides a way to load the event logs from Spark jobs that were run with event logging enabled.
+
+Due to the verbosity of files generated at the Application level pay attention to the log rolling/cleanup configuration at the bottom of the page.
+
+## Cookbook 
+
+This library is split into four (4) sections: 
 
 1. PySpark scripts for Cassandra resident real-time data (Cluster 1: DSE Analytics)
 2. PySpark scripts for Data Lake resident historic data in .parquet file based format (Cluster 2: DSE Analytics Solo)
 3. PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
 4. PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
-## PySpark scripts for Cassandra resident real-time data:
+Note that there are two clusters with 2 differing purposes: a DSE Analytics cluster (Real-time) and a DSE Analytics Solo cluster (Data Lake).
+
+## Section 1: PySpark scripts for Cassandra resident real-time data:
 
 Cluster Purpose: real-time analytics component of a big data platform
 Components of Datastax Enterprise used: Spark, Cassandra, DSEFS
@@ -83,7 +116,7 @@ Saving DataFrames to .parquet format:
 #### Load a DataFrame from a Cassandra table using SparkSQL
 #### Write out a DataFrame to DSEFS as a .parquet file
 
-## PySpark scripts for Data Lake resident historic data (in .parquet format)
+## Section 2: PySpark scripts for Data Lake resident historic data (in .parquet format)
 
 Cluster Purpose: big data querying with real-time join capabilities
 Components of Datastax Enterprise used: Spark, DSEFS
@@ -96,13 +129,29 @@ Cluster Name: DSE Data Lake
 #### Load two DataFrames from parquet data via SparkSQL and perform a JOIN
 
 
-## PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
+## Section 3: PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
 
 https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
 
-## PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
+## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
 #### Read a Cassandra table with timebased key
+
+## A note on automaion and other tools available
+
+This training demo module is intended to involve the user in manual aspects (getting hands dirty) of job scheduling, deployment etc. 
+
+There are better ways to perform some of the actions mentioned above in a production environment; see the following tools and processes.
+
+#### Spark Job Server
+
+[Spark job server documentation](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkJobserverOverview.html)
+
+DataStax Enterprise includes a bundled copy of the open-source Spark Jobserver, an optional component for submitting and managing Spark jobs, Spark contexts, and JARs on DSE Analytics clusters. 
+
+#### DSBulk tool
+
+Although not Spark, the ... TODO
 
 
 
