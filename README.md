@@ -1,8 +1,16 @@
 # pyspark-dse-cookbook
 
-A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* components of the [Datastax Enterprise](http://www.datasatx.com) platform.
+A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* components of the [Datastax Enterprise](http://www.datasatx.com) platform, this cookbook was built using Datastax Enterprise 6.7.x and Datastax Studio 6.7.x.
 
 ## Setup notes, actions and basic introduction to Spark diagnostics
+
+#### Download and start Datastax Studio
+
+Go to [Datastax Downloads](http://downloads.datastax.com) and download Datastax Studio and start it up, install instructions here: [Datastax Studio](https://docs.datastax.com/en/studio/6.7/index.html)
+
+#### Import the Datastax Stuio project
+
+Import the datastax-studio-project/pyspark-dse-project.TODO into Studio 
 
 #### Load the Spark Master UI in your browser
 
@@ -62,7 +70,7 @@ dse spark-submit \
   1000
 ```
 
-1. Note the job running in the Spark Master UI
+1. While the job is running check it's progress in the Spark Master UI
 2. Click thru to the Application UI and take note of job details
 3. Go back to the Spark Master UI and wait till the job finishes
 4. Note that you can no longer view the Application UI
@@ -77,13 +85,13 @@ The Spark history server provides a way to load the event logs from Spark jobs t
 
 Due to the verbosity of files generated at the Application level pay attention to the log rolling/cleanup configuration at the bottom of documentation link above.
 
-# Cookbook 
+## Cookbook contents
 
 These scripts are split into four (4) sections: 
 
-1. PySpark scripts for Cassandra resident real-time data (executed against Cluster1: DSE Analytics DC)
-2. PySpark scripts for Data Lake resident historic data in .parquet file based format (executed against Cluster 2: DSE Analytics Solo DC)
-3. PySpark scripts for JOINING/UNION of real-time and historic data in both clusters (executed against Cluster 2: DSE Analytics Solo DC but will also pull data from Cluster1: DSE Analytics DC)
+1. PySpark scripts for Cassandra resident real-time data interaction (executed against Cluster1: DSE Analytics DC)
+2. PySpark scripts for Data Lake resident historic data interaction (executed against Cluster 2: DSE Analytics Solo DC)
+3. PySpark scripts for JOINING/UNION of real-time and historic data in both Cassandra and Data Lake (executed against Cluster 2: DSE Analytics Solo DC but will also pull data from Cluster1: DSE Analytics DC)
 4. PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake (executed against Cluster 2: DSE Analytics Solo DC but will also pull data from Cluster1: DSE Analytics DC)
 
 DC = datacenter (A Cassandra logical datacenter)
@@ -93,7 +101,7 @@ DC = datacenter (A Cassandra logical datacenter)
 1. Cluster 1: (DSE Analytics DC)
 2. Cluster 2: (DSE Analytics Solo DC)
 
-## Section 1: PySpark scripts for Cassandra resident real-time data
+## Section 1: PySpark scripts for Cassandra resident real-time data interaction
 
 Cluster Purpose: real-time analytics component of a big data platform
 Components of Datastax Enterprise used: Spark, Cassandra, DSEFS
@@ -146,31 +154,25 @@ dse spark-submit \
 
 Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
 
-#### Load .CSV files into DSEFS manually at the command line
+###Lets run some JOINS taking note of the effect of partition key choice on Spark performance:
 
-Note: DSEFS commands are available only in the local logical datacenter.
+#### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN
+
+Datastax Studio project: run the keyspace, table creation and insetion steps (STEP 1, 2) prior to running these recipes.
+
+Note the JOIN is on a correctly chosen partition key -> efficient local data aware JOIN -> NO SHUFFLE!
+
+Deploy pyspark-dse-cookbook/cassandra_sparksql_join.py to the node and run it:
 
 ```
->dsefs dsefs://127.0.0.1:5598/ > put file:/bluefile greenfile
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/cassandra_sparksql_join.py
 ```
 
-
-#### Load one of the .CSV files in DSEFS into a DataFrame
-#### Load one of the .CSV files in DSEFS into a DataFrame and save to Cassandra as a table
-
-Lets run some JOINS taking note of the effect of partition key choice on Spark performance:
-
-#### Load a DataFrame from a Cassandra table using SparkSQL
-#### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN (poorly chosen partition key -> table scan)
-#### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN (correctly chosen partition key -> efficient local data aware join -> NO SHUFFLE!)
-#### Load two DataFrames one from a Cassandra table and the other one from DSEFS and perform a JOIN
-
-Saving DataFrames to .parquet format:
-
-#### Load a DataFrame from a Cassandra table using SparkSQL
-#### Write out a DataFrame to DSEFS as a .parquet file
-
-## Section 2: PySpark scripts for Data Lake resident historic data (in .parquet format)
+## Section 2: PySpark scripts for Data Lake resident historic data interaction (.parquet format)
 
 Cluster Purpose: big data querying with real-time join capabilities
 Components of Datastax Enterprise used: Spark, DSEFS
@@ -179,13 +181,52 @@ Access types: OLAP only
 Spark Execution location: these scripts are executed on the DSE Analytics Solo nodes
 Cluster Name: DSE Data Lake
 
-#### Load a DataFrame from parquet data via SparkSQL
-#### Load two DataFrames from parquet data via SparkSQL and perform a JOIN
+#### Load .CSV files into DSEFS manually at the command line
+
+Note: DSEFS commands are available only in the local logical datacenter.
 
 
-## Section 3: PySpark scripts for JOINING/UNION of real-time and historic data in both clusters
+
+```
+>dsefs dsefs://127.0.0.1:5598/ > put file:/bluefile greenfile
+```
+
+
+#### Load a .CSV/DSEFS file into a DataFrame
+
+
+#### Load a .CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
+
+
+#### Load an ENTIRE Parquet/DSEFS file into a DataFrame using simple read() method
+
+
+#### Load a PARTIAL Parquet/DSEFS file into a DataFrame via SparkSQL
+
+
+#### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report
+
+
+
+
+
+
+
+
+
+
+## Section 3: PySpark scripts for JOINING/UNION of real-time and historic data in both Cassandra and Data Lake
 
 https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
+
+
+
+
+
+
+
+
+
 
 ## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
@@ -210,4 +251,40 @@ Although not Spark, the ... TODO
 
 
 *DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.
+
+    
+
+
+Data Lake - querying
+--------------------
+
+#### Load a .CSV file into DSEFS manually at the command line
+
+#### Load a .CSV/DSEFS file into a DataFrame
+
+#### Load a .CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
+
+#### Load an ENTIRE Parquet/DSEFS file into a DataFrame using simple read() method
+
+#### Load a PARTIAL Parquet/DSEFS file into a DataFrame via SparkSQL
+
+#### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report
+
+
+Data Lake - archiving data from a real-time cluster into the Data Lake
+----------------------------------------------------------------------
+
+#### Select a subset of Cassandra data in one DSE Cluster from a different Cluster via SparkSQL
+
+#### Migrate aged data in the real-time cluster into the Data Lake
+
+
+Big Data - performing JOINs between R/T data and Historic data
+--------
+
+#### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN
+
+#### Change the schema in Cassandra and add some more rows
+
+#### Perform the JOIN again (notice Parquet nulls)
 
