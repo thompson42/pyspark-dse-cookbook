@@ -18,7 +18,7 @@ To use the Spark web interface enter the listen IP address of any Spark node in 
 
 #### Deploy python test job
 
-Deploy pyspark-dse-cookbook/pi.py to /home/<your-user>/pi.py to the node you just SSH'd into
+Deploy pyspark-dse-cookbook/pi.py to /home/your-user/pi.py to the node you just SSH'd into
 
 #### Run the sample pi.py script with 1GB/1xCore directly on the SSH node
 
@@ -29,7 +29,7 @@ dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/<your-user>/pi.py \
+  /home/your-user/pi.py \
   1000
 ```
 
@@ -45,7 +45,7 @@ dse spark-submit \
   --deploy-mode client \
   --executor-memory 2G \
   --total-executor-cores 2 \
-  /home/<your-user>/pi.py \
+  /home/your-user/pi.py \
   1000
 ```
 
@@ -58,7 +58,7 @@ dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/<your-user>/pi.py \
+  /home/your-user/pi.py \
   1000
 ```
 
@@ -104,14 +104,14 @@ Cluster Name: DSE Analytics
 
 #### Test Cassandra Access
 
-Deploy pyspark-dse-cookbook/test_cassandra_access.py to /home/<your-user>/test_cassandra_access.py to the node you just SSH'd into and run it:
+Deploy pyspark-dse-cookbook/test_cassandra_access.py to /home/your-user/test_cassandra_access.py to the node you just SSH'd into and run it:
 
 ```
 dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/<your-user>/test_cassandra_access.py
+  /home/your-user/test_cassandra_access.py
 ```
 
 You should see a table like this:
@@ -129,7 +129,7 @@ dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/<your-user>/load_dataframe_simple_read.py
+  /home/your-user/load_dataframe_simple_read.py
 ```
 
 #### Load a PARTIAL Cassandra table into a DataFrame using SparkSQL method
@@ -141,7 +141,7 @@ dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/<your-user>/load_dataframe_spark_sql.py
+  /home/your-user/load_dataframe_spark_sql.py
 ```
 
 Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
@@ -149,13 +149,6 @@ Note: the spark-cassandra-connector will push down CQL predicates to Cassandra l
 #### Load .CSV files into DSEFS manually at the command line
 
 Note: DSEFS commands are available only in the local logical datacenter.
-
-
-
-
-
-
-
 
 ```
 >dsefs dsefs://127.0.0.1:5598/ > put file:/bluefile greenfile
@@ -198,7 +191,7 @@ https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro
 
 #### Read a Cassandra table with timebased key
 
-## A note on automaion and other tools available
+## A note on automation and other available tools
 
 This training demo module is intended to involve the user in manual aspects (getting hands dirty) of job scheduling, deployment etc. 
 
