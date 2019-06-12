@@ -128,28 +128,28 @@ You should see a table like this:
 
 If you fail to see the table you have a connectivity issue, check the Spark logs for problems.
 
-#### Load a ENTIRE Cassandra table into a DataFrame using simple read() method
+#### Load a ENTIRE Cassandra table into a DataFrame using simple read()
 
-Deploy pyspark-dse-cookbook/load_dataframe_simple_read.py to the node and run it:
-
-```
-dse spark-submit \
-  --deploy-mode client \
-  --executor-memory 1G \
-  --total-executor-cores 1 \
-  /home/your-user/load_dataframe_simple_read.py
-```
-
-#### Load a PARTIAL Cassandra table into a DataFrame using SparkSQL method
-
-Deploy pyspark-dse-cookbook/load_dataframe_spark_sql.py to the node and run it:
+Deploy pyspark-dse-cookbook/load_dataframe_cassandra_simple_read.py to the node and run it:
 
 ```
 dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  /home/your-user/load_dataframe_spark_sql.py
+  /home/your-user/load_dataframe_cassandra_simple_read.py
+```
+
+#### Load a PARTIAL Cassandra table into a DataFrame using SparkSQL
+
+Deploy pyspark-dse-cookbook/load_dataframe_cassandra_spark_sql.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/load_dataframe_cassandra_spark_sql.py
 ```
 
 Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
@@ -211,14 +211,59 @@ Note: that "file:/" in a DSEFS command refers to the local filesystem, DSEFS can
 
 #### Load a CSV/DSEFS file into a DataFrame
 
+Deploy pyspark-dse-cookbook/load_dataframe_csv_dsefs.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/load_dataframe_csv_dsefs.py
+```
 
 #### Load a CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
 
+Deploy pyspark-dse-cookbook/load_csv_save_parquet.py to the node and run it:
 
-#### Load an ENTIRE Parquet/DSEFS file into a DataFrame using simple read() method
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/load_csv_save_parquet.py
+```
+
+Check the Parquet file: user_seesions_2.parquet was created in DSEFS:
+
+```
+>dse fs 
+dsefs dsefs://127.0.0.1:5598/ > ls
+```
+
+#### Load an ENTIRE Parquet/DSEFS file into a DataFrame using simple read()
+
+Deploy pyspark-dse-cookbook/load_dataframe_parquet_simple_read.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/load_dataframe_parquet_simple_read.py
+```
 
 
 #### Load a PARTIAL Parquet/DSEFS file into a DataFrame via SparkSQL
+
+Deploy pyspark-dse-cookbook/load_dataframe_parquet_spark_sql.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/load_dataframe_parquet_spark_sql.py
+```
 
 
 #### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report
@@ -246,6 +291,8 @@ https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro
 ## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
 #### Read a Cassandra table with timebased key into Data frame
+
+#### Parquet Append
 
 
 *DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.

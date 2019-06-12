@@ -1,7 +1,7 @@
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext
 
-conf = SparkConf().setAppName("Load DataFrame via SparkSQL")
+conf = SparkConf().setAppName("Load DataFrame from Cassandra via SparkSQL")
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
