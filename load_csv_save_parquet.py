@@ -1,9 +1,12 @@
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext
 
-conf = SparkConf().setAppName("Load a CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file")
+conf = SparkConf().setAppName("Convert CSV/DSEFS files into Parquet/DSEFS files")
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
 df_load = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load("dsefs:///user_sessions_2.csv")
+df_load_2 = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load("dsefs:///user_transactions_2.csv")
+
 df_load.write.parquet("dsefs:///user_sessions_2.parquet")
+df_load_2.write.parquet("dsefs:///user_transactions_2.parquet")

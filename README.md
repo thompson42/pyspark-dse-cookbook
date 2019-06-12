@@ -221,7 +221,7 @@ dse spark-submit \
   /home/your-user/load_dataframe_csv_dsefs.py
 ```
 
-#### Load a CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
+#### Convert CSV/DSEFS files into Parquet/DSEFS files
 
 Deploy pyspark-dse-cookbook/load_csv_save_parquet.py to the node and run it:
 
@@ -265,26 +265,54 @@ dse spark-submit \
   /home/your-user/load_dataframe_parquet_spark_sql.py
 ```
 
+#### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report to DSEFS
 
-#### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report
+Deploy pyspark-dse-cookbook/parquet_join.py to the node and run it:
 
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/parquet_join.py
+```
 
+Check the JSON report file: parquet_join.json was created in DSEFS:
 
+```
+>dse fs 
+dsefs dsefs://127.0.0.1:5598/ > ls
+```
 
+Pull the JSON file down from DSEFS to the local filesystem on the node and open it:
 
-
-
+```
+dsefs dsefs://127.0.0.1:5598/ > cp dsefs:parquet_join.json file:/home/your-user/parquet_join.json
+```
 
 ## Section 3: PySpark scripts for JOINING/UNION of real-time and historic data in both Cassandra and Data Lake
 
 https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
 
-
 #### Select a subset of Cassandra data in one DSE Cluster from a different Cluster via SparkSQL
+
+TODO - need multiple environments
 
 #### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN
 
+Deploy pyspark-dse-cookbook/cassandra_parquet_join.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/cassandra_parquet_join.py
+```
+
 #### Change the schema in Cassandra and add some more rows
+
+Go to your Datastax Studio session and run...TODO
 
 #### Perform the JOIN again (notice Parquet nulls)
 
