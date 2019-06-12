@@ -344,9 +344,10 @@ pyspark.sql.utils.AnalysisException: "Union can only be performed on tables with
 Edit the schema_mismatch_dataframe_union.py paying attention to:
 
 COMMENT OUT THE FOLLOWING LINE
+
 UNCOMMENT THE FOLLOWING LINE
 
-Save the file and run the Spark job again -> Success: An OUTER JOIN has performed the schema merging for you.
+Save the file and run the Spark job again -> Success: An OUTER JOIN has performed the schema merging for you where a UNION failed due to column count mismatch.
 
 ## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
