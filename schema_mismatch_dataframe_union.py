@@ -35,5 +35,4 @@ final_df = user_sessions_df.union(user_sessions_2_df)
 #UNCOMMENT THE FOLLOWING LINE
 #final_df = user_sessions_df.join(user_sessions_2_df, user_sessions_2_df.columns if (len(user_sessions_2_df.columns) < len(user_sessions_df.columns)) else user_sessions_df.columns, "outer")
 
-
 final_df.show()
