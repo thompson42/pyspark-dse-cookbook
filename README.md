@@ -310,17 +310,59 @@ dse spark-submit \
   /home/your-user/cassandra_parquet_join.py
 ```
 
-#### Change the schema in Cassandra and add some more rows
+#### Change the schema in the user_sessions table Cassandra by adding a column then and add some more rows
 
-Go to your Datastax Studio session and run...TODO
+Go to your Datastax Studio session and run STEP 4 and 5
 
-#### Perform the JOIN again (notice Parquet nulls)
+Then run the query in STEP 6 to see how Cassandra sees the data; Cassandra sees nulls for the field in the old record.
+
+
+#### Perform the Cassandra and Parquet JOIN again with different schemas (notice Parquet nulls)
+
+Pull the DataFrame with new schema from Cassandra for user_id = 1
+
+Pull the Dataframe with old schema from Parquet/DSEFS for user_1
+
+Run this first iteration:
+
+Deploy pyspark-dse-cookbook/schema_mismatch_dataframe_union.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/schema_mismatch_dataframe_union.py
+```
+
+This will fail (correctly) with the following exception:
+
+```
+pyspark.sql.utils.AnalysisException: "Union can only be performed on tables with the same number of columns, but the first table has 9 columns and the second table has 8 columns..."
+```
+
+Edit the schema_mismatch_dataframe_union.py paying attention to:
+
+COMMENT OUT THE FOLLOWING LINE
+UNCOMMENT THE FOLLOWING LINE
+
+Save the file and run the Spark job again -> Success: An OUTER JOIN has performed the schema merging for you.
 
 ## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
 
 #### Read a Cassandra table with timebased key into Data frame
 
 #### Parquet Append
+
+TODO: Can you append a different schema?
+
+#### Parquet Schema Merging (On read)
+
+Above we saw merging two disperate schemas into one using an OUTER JOIN against DataFrames from a Cassandra datasourse and a Parquet datasource. If we are dealing with only Parquet files we have another shcema merge mechanism.
+
+[Parquet Schema Merging](https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging)
+
+UPTO
 
 
 *DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.

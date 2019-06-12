@@ -31,8 +31,10 @@ proj.file-list = [loc('cassandra_parquet_join.py'),
                   loc('load_dataframe_csv_dsefs.py'),
                   loc('load_dataframe_parquet_simple_read.py'),
                   loc('load_dataframe_parquet_spark_sql.py'),
+                  loc('parquet_join.py'),
                   loc('pi.py'),
                   loc('README.md'),
+                  loc('schema_mismatch_dataframe_union.py'),
                   loc('test_cassandra_access.py')]
 proj.file-type = 'shared'
 proj.home-dir = loc('.')
