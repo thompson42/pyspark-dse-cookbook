@@ -154,7 +154,7 @@ dse spark-submit \
 
 Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
 
-###Lets run some JOINS taking note of the effect of partition key choice on Spark performance:
+### Lets run some JOINS taking note of the effect of partition key choice on Spark performance:
 
 #### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN
 
@@ -172,6 +172,8 @@ dse spark-submit \
   /home/your-user/cassandra_sparksql_join.py
 ```
 
+#### Save a Dataframe to a new Cassandra table - TODO
+
 ## Section 2: PySpark scripts for Data Lake resident historic data interaction (.parquet format)
 
 Cluster Purpose: big data querying with real-time join capabilities
@@ -181,21 +183,36 @@ Access types: OLAP only
 Spark Execution location: these scripts are executed on the DSE Analytics Solo nodes
 Cluster Name: DSE Data Lake
 
-#### Load .CSV files into DSEFS manually at the command line
+#### Load CSV files into DSEFS manually at the command line
 
 Note: DSEFS commands are available only in the local logical datacenter.
 
+Deploy sample-data/user_sessions_2.csv and sample-data/user_transactions_2.csv files to the node's local filesystem in the usual directory: /home/your-user/
 
+[Start DSEFS shell](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/analytics/commandsDsefs.html) :
 
 ```
->dsefs dsefs://127.0.0.1:5598/ > put file:/bluefile greenfile
+>dse fs 
 ```
 
+Load the CSV files into the DSEFS distributed:
 
-#### Load a .CSV/DSEFS file into a DataFrame
+```
+dsefs dsefs://127.0.0.1:5598/ > put file:/home/your-user/user_sessions_2.csv user_sessions_2.csv
+dsefs dsefs://127.0.0.1:5598/ > put file:/home/your-user/user_transactions_2.csv user_transactions_2.csv
+```
+
+Check the files are there:
+
+```
+dsefs dsefs://127.0.0.1:5598/ > ls
+```
+Note: that "file:/" in a DSEFS command refers to the local filesystem, DSEFS can operate on both local and distributed filesystems, the above commands copy a file from the local file system to the distributed filesystem
+
+#### Load a CSV/DSEFS file into a DataFrame
 
 
-#### Load a .CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
+#### Load a CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
 
 
 #### Load an ENTIRE Parquet/DSEFS file into a DataFrame using simple read() method
@@ -205,8 +222,6 @@ Note: DSEFS commands are available only in the local logical datacenter.
 
 
 #### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report
-
-
 
 
 
@@ -220,71 +235,20 @@ Note: DSEFS commands are available only in the local logical datacenter.
 https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
 
 
-
-
-
-
-
-
-
-
-## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
-
-#### Read a Cassandra table with timebased key
-
-## A note on automation and other available tools
-
-This training demo module is intended to involve the user in manual aspects (getting hands dirty) of job scheduling, deployment etc. 
-
-There are better ways to perform some of the actions mentioned above in a production environment; see the following tools and processes.
-
-#### Spark Job Server
-
-[Spark job server documentation](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/sparkJobserverOverview.html)
-
-DataStax Enterprise includes a bundled copy of the open-source Spark Jobserver, an optional component for submitting and managing Spark jobs, Spark contexts, and JARs on DSE Analytics clusters. 
-
-#### DSBulk tool
-
-Although not Spark, the ... TODO
-
-
-
-*DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.
-
-    
-
-
-Data Lake - querying
---------------------
-
-#### Load a .CSV file into DSEFS manually at the command line
-
-#### Load a .CSV/DSEFS file into a DataFrame
-
-#### Load a .CSV/DSEFS into a DataFrame and save it back into DSEFS as a Parquet file
-
-#### Load an ENTIRE Parquet/DSEFS file into a DataFrame using simple read() method
-
-#### Load a PARTIAL Parquet/DSEFS file into a DataFrame via SparkSQL
-
-#### Load two DataFrames from two Parquet/DSEFS files via SparkSQL, perform a JOIN, output the results as a JSON report
-
-
-Data Lake - archiving data from a real-time cluster into the Data Lake
-----------------------------------------------------------------------
-
 #### Select a subset of Cassandra data in one DSE Cluster from a different Cluster via SparkSQL
-
-#### Migrate aged data in the real-time cluster into the Data Lake
-
-
-Big Data - performing JOINs between R/T data and Historic data
---------
 
 #### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN
 
 #### Change the schema in Cassandra and add some more rows
 
 #### Perform the JOIN again (notice Parquet nulls)
+
+## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
+
+#### Read a Cassandra table with timebased key into Data frame
+
+
+*DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.
+
+
 
