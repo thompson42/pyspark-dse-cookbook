@@ -294,11 +294,20 @@ dsefs dsefs://127.0.0.1:5598/ > cp dsefs:parquet_join.json file:/home/your-user/
 
 https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
 
-#### Select a subset of Cassandra data in one DSE Cluster from a different Cluster via SparkSQL
+#### Data Lake to Real Time cluster query
 
-TODO - need multiple environments
+Deploy pyspark-dse-cookbook/data_lake_to_realtime_cluster_query.py to the node and run it:
 
-#### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  --conf spark.cassandra.connection.host=18.236.92.116 \
+  /home/your-user/data_lake_to_realtime_cluster_query.py
+```
+
+#### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN (same Cluster)
 
 Deploy pyspark-dse-cookbook/cassandra_parquet_join.py to the node and run it:
 
@@ -315,7 +324,6 @@ dse spark-submit \
 Go to your Datastax Studio session and run STEP 4 and 5
 
 Then run the query in STEP 6 to see how Cassandra sees the data; Cassandra sees nulls for the field in the old record.
-
 
 #### Perform the Cassandra and Parquet JOIN again with different schemas (notice Parquet nulls)
 
@@ -349,7 +357,12 @@ UNCOMMENT THE FOLLOWING LINE
 
 Save the file and run the Spark job again -> Success: An OUTER JOIN has performed the schema merging for you where a UNION failed due to column count mismatch.
 
+
+
+
 ## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
+
+Options: Cassandra transaction table TWCS Monthly
 
 #### Read a Cassandra table with timebased key into Data frame
 
@@ -359,12 +372,30 @@ TODO: Can you append a different schema?
 
 #### Parquet Schema Merging (On read)
 
-Above we saw merging two disperate schemas into one using an OUTER JOIN against DataFrames from a Cassandra datasourse and a Parquet datasource. If we are dealing with only Parquet files we have another shcema merge mechanism.
+Above we saw merging two disperate schemas into one using an OUTER JOIN against DataFrames from (1) a Cassandra datasourse and a (2)Parquet datasource. 
+
+If we are dealing with only Parquet files we have another schema merge mechanism:
 
 [Parquet Schema Merging](https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging)
 
-UPTO
+TODO
 
+## DSEFS useful commands:
+
+Copy a file to the local filesystem from DSEFS (DSE 6.7.0+), you may need to make the user_sessions_2.parquet directory in the local filesystem?:
+
+```
+>dse fs
+dsefs dsefs://127.0.0.1:5598/ > cd file:
+dsefs file:/home/your-user/ > cp -r dsefs:/user_sessions_2.parquet /home/your-user/user_sessions_2.parquet
+
+```
+
+Copy a file to the local filesystem from DSEFS (DSE prior 6.7.0):
+
+```
+dse hadoop fs -copyToLocal dsefs:/user_sessions_2.parquet /home/your-user/
+```
 
 *DSEFS: Datastax Enterprise File System, an HDFS compatible distributed file system - store up to 20TB per node.
 

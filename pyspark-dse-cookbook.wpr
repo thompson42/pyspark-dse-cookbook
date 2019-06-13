@@ -24,6 +24,7 @@ proj.directory-list = [{'dirloc': loc('images'),
                         'watch_for_changes': True}]
 proj.file-list = [loc('cassandra_parquet_join.py'),
                   loc('cassandra_sparksql_join.py'),
+                  loc('cross_cluster_join.py'),
                   loc('images/table_screen_shot.png'),
                   loc('load_csv_save_parquet.py'),
                   loc('load_dataframe_cassandra_simple_read.py'),
