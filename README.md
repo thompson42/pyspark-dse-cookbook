@@ -10,7 +10,7 @@ Go to [Datastax Downloads](http://downloads.datastax.com) and download Datastax 
 
 #### Import the Datastax Stuio project
 
-Import the datastax-studio-project/pyspark-dse-project.TODO into Studio 
+Import the datastax-studio-project/pyspark-dse-project. into Studio 
 
 #### Load the Spark Master UI in your browser
 
@@ -172,7 +172,13 @@ dse spark-submit \
   /home/your-user/cassandra_sparksql_join.py
 ```
 
-#### Save a Dataframe to a new Cassandra table - TODO
+#### Save a Dataframe to an existing Cassandra table
+
+This is easy to do example code is in the following file, do NOT this file directly, modify it with your source DataFrame and target kespace/table
+
+```
+save_dataframe_to_cassandra_table.py
+```
 
 ## Section 2: PySpark scripts for Data Lake resident historic data interaction (.parquet format)
 
@@ -303,9 +309,10 @@ dse spark-submit \
   --deploy-mode client \
   --executor-memory 1G \
   --total-executor-cores 1 \
-  --conf spark.cassandra.connection.host=18.236.92.116 \
   /home/your-user/data_lake_to_realtime_cluster_query.py
 ```
+
+Note: to JOIN two Cassandra tables form tow separate clusters you would need to configure two instances of the spark-cassandra-connector starting at the cluster object.
 
 #### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN (same Cluster)
 
@@ -358,9 +365,7 @@ UNCOMMENT THE FOLLOWING LINE
 Save the file and run the Spark job again -> Success: An OUTER JOIN has performed the schema merging for you where a UNION failed due to column count mismatch.
 
 
-
-
-## Section 4: PySpark scripts for ARCHIVING data from real-time cluster -> Data Lake
+## Section 4: PySpark scripts for OFFLOADING data from real-time cluster -> Data Lake
 
 Options: Cassandra transaction table TWCS Monthly
 
@@ -379,6 +384,11 @@ If we are dealing with only Parquet files we have another schema merge mechanism
 [Parquet Schema Merging](https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging)
 
 TODO
+
+
+
+
+
 
 ## DSEFS useful commands:
 
