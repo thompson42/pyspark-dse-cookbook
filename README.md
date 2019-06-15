@@ -103,12 +103,14 @@ DC = datacenter (A Cassandra logical datacenter)
 
 ## Section 1: PySpark scripts for Cassandra resident real-time data interaction
 
-Cluster Purpose: real-time analytics component of a big data platform
-Components of Datastax Enterprise used: Spark, Cassandra, DSEFS
-Data storage: Cassandra tables
-Access types: OLTP and OLAP
-Spark Execution location: these scripts are executed on the DSE Analytics nodes
-Cluster Name: DSE Analytics
+#### Cluster 1: (DSE Analytics DC)
+
+Cluster Purpose | real-time analytics component of a big data platform
+Components of Datastax Enterprise used | Spark, Cassandra, DSEFS
+Data storage | Cassandra tables
+Access types | OLTP and OLAP
+Spark Execution location | these scripts are executed on the DSE Analytics nodes
+Cluster Name | DSE Analytics
 
 #### Test Cassandra Access
 
@@ -182,12 +184,14 @@ save_dataframe_to_cassandra_table.py
 
 ## Section 2: PySpark scripts for Data Lake resident historic data interaction (.parquet format)
 
-Cluster Purpose: big data querying with real-time join capabilities
-Components of Datastax Enterprise used: Spark, DSEFS
-Data storage: File based, .parquet format
-Access types: OLAP only
-Spark Execution location: these scripts are executed on the DSE Analytics Solo nodes
-Cluster Name: DSE Data Lake
+#### Cluster 2: (DSE Analytics Solo DC)
+
+Cluster Purpose | big data querying with real-time join capabilities
+Components of Datastax Enterprise used | Spark, DSEFS
+Data storage | File based, .parquet format
+Access types | OLAP only
+Spark Execution location | these scripts are executed on the DSE Analytics Solo nodes
+Cluster Name | DSE Data Lake
 
 #### Load CSV files into DSEFS manually at the command line
 
