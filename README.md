@@ -442,25 +442,69 @@ dsefs dsefs://127.0.0.1:5598/ > ls
 
 Go to your Datastax Studio session and run STEP 10
 
+Deploy pyspark-dse-cookbook/offload_from_cassandra_to_parquet.py to the node and run it:
 
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/offload_from_cassandra_to_parquet.py
+```
+
+Open the Parquet file and notice the number of partitions, we have too many, what we really want is 2, one for each of the dates:
+
+```
+dse fs
+dsefs dsefs://127.0.0.1:5598/ > ls
+dsefs dsefs://127.0.0.1:5598/ > cd transactions.parquet
+dsefs dsefs://127.0.0.1:5598/ > ls
+
+```
+
+#### Offloading correctly using Parquet partitions
+
+Deploy pyspark-dse-cookbook/offloading_using_parquet_partitions_1.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/offloading_using_parquet_partitions_1.py
+```
+
+Deploy pyspark-dse-cookbook/offloading_using_parquet_partitions_2.py to the node and run it:
+
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/offloading_using_parquet_partitions_2.py
+```
+
+Now check the correctly partitioned parquet file:
+
+```
+dse fs
+dsefs dsefs://127.0.0.1:5598/ > ls
+dsefs dsefs://127.0.0.1:5598/ > cd transactions_partitioned_2.parquet
+dsefs dsefs://127.0.0.1:5598/ > ls
+
+```
+
+UPTO - not correctly partitioning -> GroupBy(...) ??
+
+#### Parquet Schema Merging (On read) TODO
 
 TODO: Can you append a different schema?
-
-
-
-#### Parquet Schema Merging (On read)
 
 Above we saw merging two disperate schemas into one using an OUTER JOIN against DataFrames from (1) a Cassandra datasourse and a (2)Parquet datasource. 
 
 If we are dealing with only Parquet files we have another schema merge mechanism:
 
 [Parquet Schema Merging](https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging)
-
-
-
-
-
-
 
 
 ## DSEFS useful commands:
