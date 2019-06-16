@@ -412,15 +412,37 @@ INSERT INTO test (k,v) VALUES ('test', 1) USING TTL 10;
 There is a good explanation of this behaviour and UPDATE behaviour in this StackOverflow link: [CQL INSERT UPDATE TTL](https://stackoverflow.com/questions/40730510/just-set-the-ttl-on-a-row)
 
 
-#### Read a Cassandra table with timebased key into Data frame
+#### CQL query a Cassandra table with a timebased partition key
 
+Go to your Datastax Studio session and run STEP 7, 8 and 9
 
+#### Save the table to Parquet format in DSEFS
 
+Were going to do this on the local cluster, but no reason why you can't do this on the Data Lake and saving the R/T cluster data to the Data Lake.
 
+Deploy pyspark-dse-cookbook/create_parquet_file_from_cassandra_table.py to the node and run it:
 
-#### Parquet Append
+```
+dse spark-submit \
+  --deploy-mode client \
+  --executor-memory 1G \
+  --total-executor-cores 1 \
+  /home/your-user/create_parquet_file_from_cassandra_table.py
+```
+Check the Parquet file transactions.parquet was writtine to DSEFS:
+
+```
+dse fs
+dsefs dsefs://127.0.0.1:5598/ > ls
+```
+
+#### Parquet Append Offloading
 
 [Incrementally loaded Parquet files](https://aseigneurin.github.io/2017/03/14/incrementally-loaded-parquet-files.html)
+
+Go to your Datastax Studio session and run STEP 10
+
+
 
 TODO: Can you append a different schema?
 
