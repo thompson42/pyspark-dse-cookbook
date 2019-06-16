@@ -371,13 +371,60 @@ Save the file and run the Spark job again -> Success: An OUTER JOIN has performe
 
 ## Section 4: PySpark scripts for OFFLOADING data from real-time cluster -> Data Lake
 
-Options: Cassandra transaction table TWCS Monthly
+#### An explanation of TimeWindowCompactionStrategy
+
+TimeWindowCompactionStrategy allows us to store time oriented data in blocks on the file system, in Cassandra those blocks are SortedStringTables (SSTables for short).
+
+Transactional data is typically time oriented so can take advantage of TWCS's ability to reduce query latency (IO latency) by holding slices of time in the same file (SSTable) on disk.
+
+This is an example of TWCS applied to a transactional table, all transactions for an hour will eventually compact into a single SSTable on disk
+
+```
+CREATE TABLE my_keyspace.transactions (
+    ...
+) WITH ...
+    AND compaction = {'compaction_window_size': '1', 
+                      'compaction_window_unit': 'HOURS', 
+                      'class': 'org.apache.cassandra.db.compaction.TimeWindowCompactionStrategy'}
+```
+
+There is a great explanation of TWCS in this short article: [TWCS part 1 - how does it work and when should you use it](https://thelastpickle.com/blog/2016/12/08/TWCS-part1.html)
+
+#### An explanation of TTLs with Cassandra
+
+TTL stands for "time to live", data in Cassandra by default lives forever, that's what databases are for, but there are use cases where data can and should expire at some point a classic examplae is airline flights
+once a flight has landed and cleared it's passengers it is no longer mutable, it it now historic data. In a two tiered real-time -> historic data solution the flight needs to be move out of the real-time store and into the historic store.
+The usual way to do this is to:
+
+1. Query the R/T store for completed flights
+2. Copy those flights over the Historic store
+3. Delete the flights from the R/T store
+
+In this use case example we can avoid Step (3) by placing a TTL on the flight's row, the flight will automatically be purged from the R/T store after "x" amount of time from insertion (or reaching a completed status..., or some other parameter...)
+
+TTLs only exist on columns, not rows, however there is a convenience method when inserting a row for the first time; if you place a TTL on the INSERT all columns get the same TTL.
+Here is an example:
+
+```
+INSERT INTO test (k,v) VALUES ('test', 1) USING TTL 10;
+```
+
+There is a good explanation of this behaviour and UPDATE behaviour in this StackOverflow link: [CQL INSERT UPDATE TTL](https://stackoverflow.com/questions/40730510/just-set-the-ttl-on-a-row)
+
 
 #### Read a Cassandra table with timebased key into Data frame
 
+
+
+
+
 #### Parquet Append
 
+[Incrementally loaded Parquet files](https://aseigneurin.github.io/2017/03/14/incrementally-loaded-parquet-files.html)
+
 TODO: Can you append a different schema?
+
+
 
 #### Parquet Schema Merging (On read)
 
@@ -387,7 +434,7 @@ If we are dealing with only Parquet files we have another schema merge mechanism
 
 [Parquet Schema Merging](https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging)
 
-TODO
+
 
 
 
