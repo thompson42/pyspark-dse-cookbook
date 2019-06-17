@@ -105,6 +105,7 @@ DC = datacenter (A Cassandra logical datacenter)
 
 #### Cluster 1: (DSE Analytics DC)
 
+| ------------- | ------------- |
 | Cluster Purpose | real-time analytics component of a big data platform |
 | Components of Datastax Enterprise used | Spark, Cassandra, DSEFS |
 | Data storage | Cassandra tables |
@@ -186,6 +187,7 @@ save_dataframe_to_cassandra_table.py
 
 #### Cluster 2: (DSE Analytics Solo DC)
 
+| ------------- | ------------- |
 | Cluster Purpose | big data querying with real-time join capabilities |
 | Components of Datastax Enterprise used | Spark, DSEFS |
 | Data storage | File based, .parquet format |
