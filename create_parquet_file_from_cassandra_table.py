@@ -5,7 +5,7 @@ conf = SparkConf().setAppName("Create Parquet file from Cassandra table")
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
-#register the transactions cassandra table
+#register the cassandra table
 transactions_ddl = """CREATE TEMPORARY VIEW transactions
      USING org.apache.spark.sql.cassandra
      OPTIONS (
@@ -14,8 +14,10 @@ transactions_ddl = """CREATE TEMPORARY VIEW transactions
      cluster "Cluster 1",
      pushdown "true")"""
 
-#load the DF
-sqlContext.sql(transactions_ddl) # Creates Catalog Entry registering an existing Cassandra Table
+# Creates Catalog Entry registering an existing Cassandra Table
+sqlContext.sql(transactions_ddl) 
+
+#load the DF with a SparkSQL statement, predicate pushdown will occur here as this is a valid CQL query
 transactions_df = sqlContext.sql("SELECT * FROM transactions WHERE transaction_day = '2005-01-01'")
 
 #save the DF to parquet/DSEFS

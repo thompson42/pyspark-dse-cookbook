@@ -440,6 +440,20 @@ dsefs dsefs://127.0.0.1:5598/ > ls
 
 [Incrementally loaded Parquet files](https://aseigneurin.github.io/2017/03/14/incrementally-loaded-parquet-files.html)
 
+Take special notice in the blog post above the difference between many parquet files in a directory and a single parquet file with multiple partitions.
+
+We want a single parquet file with multiple partitions (we can them query across the entire data set without Spark performing UNIONs with other files):
+
+```
+dse fs
+dsefs dsefs://127.0.0.1:5598/ > ls
+dsefs dsefs://127.0.0.1:5598/ > cd my-parquet-file.parquet
+dsefs dsefs://127.0.0.1:5598/ > ls
+...  14:53 part-00001-bd5d902d-fac9-4e03-b63e-6a8dfc4060b6.snappy.parquet
+...  14:53 part-00000-bd5d902d-fac9-4e03-b63e-6a8dfc4060b6.snappy.parquet
+
+```
+
 Go to your Datastax Studio session and run STEP 10
 
 Deploy pyspark-dse-cookbook/offload_from_cassandra_to_parquet.py to the node and run it:
@@ -489,12 +503,10 @@ Now check the correctly partitioned parquet file:
 ```
 dse fs
 dsefs dsefs://127.0.0.1:5598/ > ls
-dsefs dsefs://127.0.0.1:5598/ > cd transactions_partitioned_2.parquet
+dsefs dsefs://127.0.0.1:5598/ > cd transactions_partitioned.parquet
 dsefs dsefs://127.0.0.1:5598/ > ls
 
 ```
-
-UPTO - not correctly partitioning -> GroupBy(...) ??
 
 #### Parquet Schema Merging (On read) TODO
 
@@ -506,6 +518,9 @@ If we are dealing with only Parquet files we have another schema merge mechanism
 
 [Parquet Schema Merging](https://spark.apache.org/docs/latest/sql-data-sources-parquet.html#schema-merging)
 
+## Optimisation techniques
+
+[Predicate Pushdown](https://docs.datastax.com/en/dse/6.0/dse-dev/datastax_enterprise/spark/sparkPredicatePushdown.html)
 
 ## DSEFS useful commands:
 

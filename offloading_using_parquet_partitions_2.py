@@ -1,11 +1,11 @@
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext
 
-conf = SparkConf().setAppName("Offload form Cassandra to Parquet")
+conf = SparkConf().setAppName("Offloading using parquet partitions 2")
 sc = SparkContext(conf=conf)
 sqlContext = SQLContext(sc)
 
-#register the transactions cassandra table
+#register the cassandra table
 transactions_ddl = """CREATE TEMPORARY VIEW transactions
      USING org.apache.spark.sql.cassandra
      OPTIONS (
@@ -14,9 +14,11 @@ transactions_ddl = """CREATE TEMPORARY VIEW transactions
      cluster "Cluster 1",
      pushdown "true")"""
 
-#load the DF
-sqlContext.sql(transactions_ddl) # Creates Catalog Entry registering an existing Cassandra Table
+#creates Catalog Entry registering an existing Cassandra Table
+sqlContext.sql(transactions_ddl)
+
+#load the DF with a SparkSQL statement, predicate pushdown will occur here as this is a valid CQL query
 transactions_df = sqlContext.sql("SELECT * FROM transactions WHERE transaction_day = '2005-01-02'")
 
 #save the DF to parquet/DSEFS
-transactions_df.coalesce(1).write.mode("append").parquet("dsefs:///transactions_partitioned_2.parquet")
+transactions_df.coalesce(1).write.mode("append").parquet("dsefs:///transactions_partitioned.parquet")

@@ -14,8 +14,10 @@ user_transactions_ddl = """CREATE TEMPORARY VIEW user_transactions
      cluster "Cluster 1",
      pushdown "true")"""
 
-#load the DF
-sqlContext.sql(user_transactions_ddl) # Creates Catalog Entry registering an existing Cassandra Table
+#creates Catalog Entry registering an existing Cassandra Table
+sqlContext.sql(user_transactions_ddl) 
+
+#load the DF with a SparkSQL statement, predicate pushdown will NOT occur here as this is NOT a valid CQL query
 user_transactions_df = sqlContext.sql("SELECT * FROM user_transactions")
 
 #register the user_sessions cassandra table
@@ -27,8 +29,10 @@ user_sessions_ddl = """CREATE TEMPORARY VIEW user_sessions
      cluster "Cluster 1",
      pushdown "true")"""
 
-#load the DF
-sqlContext.sql(user_sessions_ddl) # Creates Catalog Entry registering an existing Cassandra Table
+#creates Catalog Entry registering an existing Cassandra Table
+sqlContext.sql(user_sessions_ddl) 
+
+#load the DF with a SparkSQL statement, predicate pushdown will NOT occur here as this is NOT a valid CQL query
 user_sessions_df = sqlContext.sql("SELECT * FROM user_sessions")
 
 #JOIN the dataframes

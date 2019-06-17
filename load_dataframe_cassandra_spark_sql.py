@@ -14,5 +14,8 @@ createDDL = """CREATE TEMPORARY VIEW compaction_history
      cluster "Cluster 1",
      pushdown "true")"""
 
-sqlContext.sql(createDDL) # Creates Catalog Entry registering an existing Cassandra Table
+#Creates Catalog Entry registering an existing Cassandra Table
+sqlContext.sql(createDDL)
+
+#load the DF with a SparkSQL statement, predicate pushdown will NOT occur here as this is NOT a valid CQL query
 sqlContext.sql("SELECT * FROM compaction_history").show()
