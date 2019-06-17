@@ -8,9 +8,9 @@ A series of PySpark recipes for interacting with the Spark/Cassandra/DSEFS* comp
 
 Go to [Datastax Downloads](http://downloads.datastax.com) and download Datastax Studio and start it up, install instructions here: [Datastax Studio](https://docs.datastax.com/en/studio/6.7/index.html)
 
-#### Import the Datastax Stuio project
+#### Import the Datastax Studio project
 
-Import the datastax-studio-project/pyspark-dse-project. into Studio 
+Import the datastax-studio-project/pyspark-dse-cookbook.studio-nb.tar into Datastax Studio
 
 #### Load the Spark Master UI in your browser
 
@@ -154,13 +154,13 @@ dse spark-submit \
   /home/your-user/load_dataframe_cassandra_spark_sql.py
 ```
 
-Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
+Note: the spark-cassandra-connector will push down CQL predicates to Cassandra level (or said another way: the connector has the smarts to push down the WHERE clause constraints to Cassandra as opposed to filtering at the Spark level)
 
 ### Lets run some JOINS taking note of the effect of partition key choice on Spark performance:
 
 #### Load two DataFrames from Cassandra tables using SparkSQL and perform a JOIN
 
-Datastax Studio project: run the keyspace, table creation and insetion steps (STEP 1, 2) prior to running these recipes.
+Datastax Studio project: run the keyspace, table creation and insertion steps (STEP 1, 2) prior to running these recipes.
 
 Note the JOIN is on a correctly chosen partition key -> efficient local data aware JOIN -> NO SHUFFLE!
 
@@ -205,19 +205,19 @@ Deploy sample-data/user_sessions_2.csv and sample-data/user_transactions_2.csv f
 >dse fs 
 ```
 
-Load the CSV files into the DSEFS distributed:
+Load the CSV files into the DSEFS distributed filesystem:
 
 ```
 dsefs dsefs://127.0.0.1:5598/ > put file:/home/your-user/user_sessions_2.csv user_sessions_2.csv
 dsefs dsefs://127.0.0.1:5598/ > put file:/home/your-user/user_transactions_2.csv user_transactions_2.csv
 ```
 
-Check the files are there:
+Check the CSV files are there:
 
 ```
 dsefs dsefs://127.0.0.1:5598/ > ls
 ```
-Note: that "file:/" in a DSEFS command refers to the local filesystem, DSEFS can operate on both local and distributed filesystems, the above commands copy a file from the local file system to the distributed filesystem
+Note: that "file:/" in a DSEFS command refers to the local filesystem, DSEFS can operate on both local (file:) and distributed (dsefs:) filesystems, the above commands copy a file from the local file system to the distributed filesystem
 
 #### Load a CSV/DSEFS file into a DataFrame
 
@@ -302,9 +302,9 @@ dsefs dsefs://127.0.0.1:5598/ > cp dsefs:parquet_join.json file:/home/your-user/
 
 ## Section 3: PySpark scripts for JOINING/UNION of real-time and historic data in both Cassandra and Data Lake
 
-https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/spark/byosIntro.html
+JOIN data in a historic Data Lake with real-time data in Cassandra.
 
-#### Data Lake to Real Time cluster query
+#### Combined Data Lake an Real Time cluster query
 
 Deploy pyspark-dse-cookbook/data_lake_to_realtime_cluster_query.py to the node and run it:
 
@@ -318,7 +318,7 @@ dse spark-submit \
 
 Note: to JOIN two Cassandra tables form tow separate clusters you would need to configure two instances of the spark-cassandra-connector starting at the cluster object.
 
-#### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN (same Cluster)
+#### Load two DataFrames one from a Cassandra table and the other one from a DSEFS Parquet file and perform a JOIN
 
 Deploy pyspark-dse-cookbook/cassandra_parquet_join.py to the node and run it:
 
@@ -330,7 +330,7 @@ dse spark-submit \
   /home/your-user/cassandra_parquet_join.py
 ```
 
-#### Change the schema in the user_sessions table Cassandra by adding a column then and add some more rows
+#### Change the schema in the user_sessions table Cassandra by adding a column, then and add some more rows
 
 Go to your Datastax Studio session and run STEP 4 and 5
 
@@ -369,7 +369,7 @@ UNCOMMENT THE FOLLOWING LINE
 Save the file and run the Spark job again -> Success: An OUTER JOIN has performed the schema merging for you where a UNION failed due to column count mismatch.
 
 
-## Section 4: PySpark scripts for OFFLOADING data from real-time cluster -> Data Lake
+## Section 4: PySpark design and scripts for OFFLOADING data from real-time cluster -> Data Lake
 
 #### An explanation of TimeWindowCompactionStrategy
 
@@ -392,8 +392,8 @@ There is a great explanation of TWCS in this short article: [TWCS part 1 - how d
 
 #### An explanation of TTLs with Cassandra
 
-TTL stands for "time to live", data in Cassandra by default lives forever, that's what databases are for, but there are use cases where data can and should expire at some point a classic examplae is airline flights
-once a flight has landed and cleared it's passengers it is no longer mutable, it it now historic data. In a two tiered real-time -> historic data solution the flight needs to be move out of the real-time store and into the historic store.
+TTL stands for "time to live", data in Cassandra by default lives forever, that's what databases are for, but there are use cases where data can and should expire at some point a classic examplae is airline flights.
+Once a flight has landed and cleared it's passengers it is no longer mutable, it it now historic data. In a two tiered real-time -> historic data solution the flight needs to be move out of the real-time store and into the historic store.
 The usual way to do this is to:
 
 1. Query the R/T store for completed flights
@@ -402,7 +402,7 @@ The usual way to do this is to:
 
 In this use case example we can avoid Step (3) by placing a TTL on the flight's row, the flight will automatically be purged from the R/T store after "x" amount of time from insertion (or reaching a completed status..., or some other parameter...)
 
-TTLs only exist on columns, not rows, however there is a convenience method when inserting a row for the first time; if you place a TTL on the INSERT all columns get the same TTL.
+TTLs only exist on columns, not rows, however there is a convenience when inserting a row for the first time; if you place a TTL on the INSERT, all columns get the same TTL.
 Here is an example:
 
 ```
@@ -412,7 +412,7 @@ INSERT INTO test (k,v) VALUES ('test', 1) USING TTL 10;
 There is a good explanation of this behaviour and UPDATE behaviour in this StackOverflow link: [CQL INSERT UPDATE TTL](https://stackoverflow.com/questions/40730510/just-set-the-ttl-on-a-row)
 
 
-#### CQL query a Cassandra table with a timebased partition key
+#### CQL query a Cassandra table with a time based partition key
 
 Go to your Datastax Studio session and run STEP 7, 8 and 9
 
@@ -436,7 +436,7 @@ dse fs
 dsefs dsefs://127.0.0.1:5598/ > ls
 ```
 
-#### Parquet Append Offloading
+#### Parquet Append Offloading - Moving data from the real-time cluster to a Data Lake
 
 [Incrementally loaded Parquet files](https://aseigneurin.github.io/2017/03/14/incrementally-loaded-parquet-files.html)
 
@@ -508,9 +508,12 @@ dsefs dsefs://127.0.0.1:5598/ > ls
 
 ```
 
+Summary: what we managed to do here is place a TTL on data in Cassandra, this data will be deleted at some point in the future. 
+The second phase was to move the data to the Data Lake.
+
 #### Parquet Schema Merging (On read) TODO
 
-TODO: Can you append a different schema?
+TODO: Can you parquet append a different schema?
 
 Above we saw merging two disperate schemas into one using an OUTER JOIN against DataFrames from (1) a Cassandra datasourse and a (2)Parquet datasource. 
 
