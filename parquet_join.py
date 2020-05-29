@@ -14,4 +14,5 @@ final_df = user_transactions_2_df.join(user_sessions_2_df, ['user_id','session_i
 
 #output to DSEFS as JSON
 final_df.write.json("dsefs:///parquet_join.json")
+final_df.coalesce(1).write.format('json').save("dsefs:///parquet_join.json")
 

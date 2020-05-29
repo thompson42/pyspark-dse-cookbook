@@ -21,4 +21,4 @@ sqlContext.sql(transactions_ddl)
 transactions_df = sqlContext.sql("SELECT * FROM transactions WHERE transaction_day = '2005-01-01'")
 
 #save the DF to parquet/DSEFS
-transactions_df.coalesce(1).write.parquet("dsefs:///transactions_paritioned.parquet")
+transactions_df.coalesce(1).write.parquet("dsefs:///transactions_partitioned_2.parquet")

@@ -304,6 +304,8 @@ dsefs dsefs://127.0.0.1:5598/ > ls
 
 Pull the JSON file down from DSEFS to the local filesystem on the node and open it:
 
+Note: the following command will work for DSE 6.7.0+, for earlier versions see the workaround command at the bottom of the page under DSEFS.
+
 ```
 dsefs dsefs://127.0.0.1:5598/ > cp dsefs:parquet_join.json file:/home/your-user/parquet_join.json
 ```

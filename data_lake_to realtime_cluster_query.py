@@ -4,7 +4,7 @@ from pyspark.sql import SQLContext
 #override the DSE default SparkConf that points to the local cluster and point it at a list of node/s in a remote cluster
 conf = SparkConf()
 conf.setAppName("Data Lake to Real Time cluster query")
-conf.set('spark.cassandra.connection.host', '18.236.92.116,54.218.72.168,34.222.16.245')
+conf.set('spark.cassandra.connection.host', '54.202.208.183')
 conf.set('spark.cassandra.connection.port', '9042')
 conf.set('spark.cassandra.output.consistency.level','ONE')
 
